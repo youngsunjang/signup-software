@@ -22,71 +22,41 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "index.html"));
 });
 
-// Original version: Signup: Create new user
-app.post("/signup", (req, res) => {
-  const { name, email } = req.body;
-  if (!name || !email) {
-    return res.send("Please enter both name and email.");
-  }
-
-  const newUser = { id: Date.now(), name, email };
-  users.push(newUser);
-  fs.writeFileSync(DATA_FILE, JSON.stringify(users, null, 2));
-
-  res.redirect("/users");
-});
-
-
-// // New version: 
+// // Original version: Signup: Create new user
 // app.post("/signup", (req, res) => {
-//   const { name, email, phone } = req.body;
-//   if (!name || !email || !phone) {
-//     return res.send("Please enter both name, email, and phone.");
+//   const { name, email } = req.body;
+//   if (!name || !email) {
+//     return res.send("Please enter both name and email.");
 //   }
 
-//   const newUser = { id: Date.now(), name, email, phone };
+//   const newUser = { id: Date.now(), name, email };
 //   users.push(newUser);
 //   fs.writeFileSync(DATA_FILE, JSON.stringify(users, null, 2));
 
 //   res.redirect("/users");
 // });
 
-// Original version: User list view
-app.get("/users", (req, res) => {
-  let html = `
-  <h2>Registered Users</h2>
-  <table border="1" cellpadding="5">
-    <tr><th>ID</th><th>Name</th><th>Email</th><th>Action</th></tr>
-  `;
 
-  users.forEach(u => {
-    html += `
-      <tr>
-        <td>${u.id}</td>
-        <td>${u.name}</td>
-        <td>${u.email}</td>
-        <td>
-          <form action="/delete/${u.id}" method="POST" style="display:inline;">
-            <button type="submit">Delete</button>
-          </form>
-        </td>
-      </tr>
-    `;
-  });
+// New version: 
+app.post("/signup", (req, res) => {
+  const { name, email, phone } = req.body;
+  if (!name || !email || !phone) {
+    return res.send("Please enter both name, email, and phone.");
+  }
 
-  html += `
-  </table>
-  <br><a href="/">Back to Signup</a>
-  `;
-  res.send(html);
+  const newUser = { id: Date.now(), name, email, phone };
+  users.push(newUser);
+  fs.writeFileSync(DATA_FILE, JSON.stringify(users, null, 2));
+
+  res.redirect("/users");
 });
 
-// New version: User list view
+// // Original version: User list view
 // app.get("/users", (req, res) => {
 //   let html = `
 //   <h2>Registered Users</h2>
 //   <table border="1" cellpadding="5">
-//     <tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Action</th></tr>
+//     <tr><th>ID</th><th>Name</th><th>Email</th><th>Action</th></tr>
 //   `;
 
 //   users.forEach(u => {
@@ -95,7 +65,6 @@ app.get("/users", (req, res) => {
 //         <td>${u.id}</td>
 //         <td>${u.name}</td>
 //         <td>${u.email}</td>
-//         <td>${u.phone || "-"}</td>
 //         <td>
 //           <form action="/delete/${u.id}" method="POST" style="display:inline;">
 //             <button type="submit">Delete</button>
@@ -111,6 +80,37 @@ app.get("/users", (req, res) => {
 //   `;
 //   res.send(html);
 // });
+
+// New version: User list view
+app.get("/users", (req, res) => {
+  let html = `
+  <h2>Registered Users</h2>
+  <table border="1" cellpadding="5">
+    <tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Action</th></tr>
+  `;
+
+  users.forEach(u => {
+    html += `
+      <tr>
+        <td>${u.id}</td>
+        <td>${u.name}</td>
+        <td>${u.email}</td>
+        <td>${u.phone || "-"}</td>
+        <td>
+          <form action="/delete/${u.id}" method="POST" style="display:inline;">
+            <button type="submit">Delete</button>
+          </form>
+        </td>
+      </tr>
+    `;
+  });
+
+  html += `
+  </table>
+  <br><a href="/">Back to Signup</a>
+  `;
+  res.send(html);
+});
 
 // Delete user
 app.post("/delete/:id", (req, res) => {
